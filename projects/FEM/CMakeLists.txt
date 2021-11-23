@@ -23,6 +23,7 @@ set(FEM_MUSCLE_SOURCE_FILES
     src/integrator/quasi_static_solver.cpp
     nodesys.cpp
     testopensim.cpp
+    opensimNode.cpp
 )
 
 add_library(zeno_FEM SHARED ${FEM_MUSCLE_SOURCE_FILES})

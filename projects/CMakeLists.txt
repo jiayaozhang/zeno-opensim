@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
 set(EXTENSIONS_LIST ZenoFX oldzenbase zenvdb FastFLIP FLIPtools Rigid BulletTools cgmesh gmpm mesher Euler OldZMS OldZFX EasyGL FEM)
-set(EXTENSIONS_ENABLE_LIST ZenoFX oldzenbase)
+set(EXTENSIONS_ENABLE_LIST ZenoFX oldzenbase FEM)
 
 add_library(zeno_nodep INTERFACE)
 if (ZENO_HIDE_SYMBOLS AND UNIX)
