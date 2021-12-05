@@ -52,6 +52,139 @@ namespace zeno
             },
         });
 
+    struct OSTBody : zeno::IObject
+    {
+        OpenSim::Body _body;
+    };
+
+    struct MakeOSTBody : zeno::INode
+    {
+        virtual void apply() override
+        {
+            auto name{get_param<std::string>("name")};
+            auto mass{get_param<float>("mass")};
+            auto massCenterX{get_param<float>("massCenterX")};
+            auto massCenterY{get_param<float>("massCenterY")};
+            auto massCenterZ{get_param<float>("massCenterZ")};
+            auto inertiaXX{get_param<float>("inertiaXX")};
+            auto inertiaYY{get_param<float>("inertiaYY")};
+            auto inertiaZZ{get_param<float>("inertiaZZ")};
+            auto inertiaXY{get_param<float>("inertiaXY")};
+            auto inertiaXZ{get_param<float>("inertiaXZ")};
+            auto inertiaYZ{get_param<float>("inertiaYZ")};
+            auto body{std::make_shared<OSTBody>()};
+            body->_body.setName(name);
+            body->_body.setMass(mass);
+            body->_body.setMassCenter({massCenterX, massCenterY, massCenterZ});
+            body->_body.setInertia({inertiaXX, inertiaYY, inertiaZZ, inertiaXY, inertiaXZ, inertiaYZ});
+            set_output("body", std::move(body));
+        }
+    };
+
+    ZENDEFNODE(
+        MakeOSTBody,
+        {
+            {},
+            {
+                {"OSTBody", "body"},
+            },
+            {
+                {"string", "name", ""},
+                {"float", "mass", "0.0"},
+                {"float", "massCenterX", "0.0"},
+                {"float", "massCenterY", "0.0"},
+                {"float", "massCenterZ", "0.0"},
+                {"float", "inertiaXX", "0.0"},
+                {"float", "inertiaYY", "0.0"},
+                {"float", "inertiaZZ", "0.0"},
+                {"float", "inertiaXY", "0.0"},
+                {"float", "inertiaXZ", "0.0"},
+                {"float", "inertiaYZ", "0.0"},
+            },
+            {
+                "FEM",
+            },
+        });
+
+    struct AddBodyToModel : zeno::INode
+    {
+        virtual void apply() override
+        {
+            auto model{get_input<OSTModel>("model")};
+            auto body{get_input<OSTBody>("body")};
+            model->_model.addBody(&body->_body);
+            set_output("model", std::move(model));
+        }
+    };
+
+    ZENDEFNODE(
+        AddBodyToModel,
+        {
+            {
+                {"OSTModel", "model"},
+                {"OSTBody", "body"},
+            },
+            {
+                {"OSTModel", "model"},
+            },
+            {},
+            {
+                "FEM",
+            },
+        });
+
+    // struct OSTJoint : zeno::IObject
+    // {
+    //     std::shared_ptr<OpenSim::Joint> _joint;
+    // };
+
+    // struct MakeOSTJoint : zeno::INode
+    // {
+    //     virtual void apply() override
+    //     {
+    //         auto joint{std::make_shared<OSTJoint>()};
+    //         switch (type)
+    //         {
+    //             case(PinJoint):
+    //                 joint->_joint = std::make_shared<OpenSim::PinJoint>();
+    //                 break;
+    //             case(BallJoint):
+    //                 joint->_joint = std::make_shared<OpenSim::BallJoint>();
+    //                 break;
+    //         }
+    //         body->_body.setName(name);
+    //         body->_body.setMass(mass);
+    //         body->_body.setMassCenter({massCenterX, massCenterY, massCenterZ});
+    //         body->_body.setInertia({inertiaXX, inertiaYY, inertiaZZ, inertiaXY, inertiaXZ, inertiaYZ});
+    //         set_output("body", std::move(body));
+    //     }
+    // };
+
+    ZENDEFNODE(
+        MakeOSTBody,
+        {
+            {},
+            {
+                {"OSTBody", "body"},
+            },
+            {
+                {"string", "name", ""},
+                {"float", "mass", "0.0"},
+                {"float", "massCenterX", "0.0"},
+                {"float", "massCenterY", "0.0"},
+                {"float", "massCenterZ", "0.0"},
+                {"float", "inertiaXX", "0.0"},
+                {"float", "inertiaYY", "0.0"},
+                {"float", "inertiaZZ", "0.0"},
+                {"float", "inertiaXY", "0.0"},
+                {"float", "inertiaXZ", "0.0"},
+                {"float", "inertiaYZ", "0.0"},
+            },
+            {
+                "FEM",
+            },
+        });
+
     struct RunOSTIKTool : zeno::INode
     {
         virtual void apply() override
@@ -201,7 +334,7 @@ namespace zeno
                 {"string", "results_directory", ""},
                 {"string", "model_file", ""},
                 // {"string", "model_file", "subject01_simbody.osim"},
-                // How to code a list of double in zeno?
+                // 
                 {"string", "time_range", ""},
                 // {"string", "time_range", "0.4 1.6"},
                 {"string", "output_motion_file", ""},
